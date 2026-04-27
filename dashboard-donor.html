@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individual Donor Dashboard - NourishNet</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            color: var(--text-dark);
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ec4899, #be123c);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+        }
+
+        .header-text h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-text p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header i {
+            font-size: 1.25rem;
+            color: #ec4899;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .occasion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .occasion-btn {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .occasion-btn:hover {
+            border-color: #ec4899;
+            background: #fdf2f8;
+        }
+
+        .occasion-btn.active {
+            border-color: #ec4899;
+            background: #fdf2f8;
+            color: #ec4899;
+        }
+
+        .donation-type-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .type-card {
+            padding: 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .type-card:hover {
+            border-color: #ec4899;
+            background: #fdf2f8;
+        }
+
+        .type-card.active {
+            border-color: #ec4899;
+            background: #fdf2f8;
+        }
+
+        .type-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .type-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .complete-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(90deg, #ec4899, #be123c);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .complete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(236,72,153,0.4);
+        }
+
+        .donation-item {
+            padding: 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .donation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .donation-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .donation-amount {
+            color: #ec4899;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .donation-ngo {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .donation-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .view-photos {
+            color: #10b981;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .impact-card {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .impact-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .impact-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .impact-stat {
+            background: rgba(255,255,255,0.2);
+            padding: 1.25rem;
+            border-radius: 12px;
+        }
+
+        .impact-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .badge-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .badge-item i {
+            font-size: 1.1rem;
+        }
+
+        .promise-card {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .promise-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .promise-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 0.75rem 2rem; display: flex; gap: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 1000;">
+        <a href="login-donor.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: transparent; border: 2px solid #e5e7eb; border-radius: 50px; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left" style="font-size: 0.85rem;"></i> Back
+        </a>
+        <a href="index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: transparent; border: 2px solid #e5e7eb; border-radius: 50px; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-decoration: none;">
+            <i class="fa-solid fa-house" style="font-size: 0.85rem;"></i> Home
+        </a>
+    </div>
+
+    <div class="dashboard-header" style="margin-top: 60px;">
+        <div class="header-icon">
+            <i class="fa-solid fa-heart"></i>
+        </div>
+        <div class="header-text">
+            <h1>Individual Donor Dashboard</h1>
+            <p>Celebrate your special moments by feeding those in need</p>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-grid">
+            <!-- Make a Donation -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fa-solid fa-gift"></i>
+                    <h2>Make a Donation</h2>
+                </div>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-input" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Special Occasion</label>
+                        <div class="occasion-grid">
+                            <button type="button" class="occasion-btn">
+                                <i class="fa-solid fa-cake-candles"></i> Birthday
+                            </button>
+                            <button type="button" class="occasion-btn">
+                                <i class="fa-solid fa-heart"></i> Anniversary
+                            </button>
+                            <button type="button" class="occasion-btn">
+                                <i class="fa-solid fa-users"></i> Wedding
+                            </button>
+                            <button type="button" class="occasion-btn">
+                                <i class="fa-solid fa-star"></i> Graduation
+                            </button>
+                            <button type="button" class="occasion-btn">
+                                <i class="fa-solid fa-gift"></i> Festival/Holiday
+                            </button>
+                            <button type="button" class="occasion-btn">
+                                <i class="fa-solid fa-calendar"></i> Other Special Day
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Donation Type</label>
+                        <div class="donation-type-grid">
+                            <div class="type-card">
+                                <div class="type-title">Money</div>
+                                <div class="type-subtitle">Fund food purchase</div>
+                            </div>
+                            <div class="type-card">
+                                <div class="type-title">Food Items</div>
+                                <div class="type-subtitle">Direct food donation</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Select NGO</label>
+                        <select class="form-select">
+                            <option>Choose an NGO</option>
+                            <option>Hope Foundation</option>
+                            <option>Care India</option>
+                            <option>Akshaya Patra</option>
+                            <option>Feeding India</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Personal Message (Optional)</label>
+                        <textarea class="form-textarea" placeholder="Add a message to share with the community"></textarea>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="public-feed">
+                        <label for="public-feed">Share this donation on the public transparency feed</label>
+                    </div>
+                    <button type="submit" class="complete-btn">Complete Donation</button>
+                </form>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Your Donations -->
+                <div class="dashboard-card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <i class="fa-solid fa-trophy"></i>
+                        <h2>Your Donations</h2>
+                    </div>
+                    <div class="donation-item">
+                        <div class="donation-header">
+                            <span class="donation-title">Birthday</span>
+                            <span class="donation-amount">₹5,000</span>
+                        </div>
+                        <div class="donation-ngo">Hope Foundation</div>
+                        <div class="donation-meta">
+                            <span>45 people fed</span>
+                            <span>2026-04-30</span>
+                        </div>
+                        <a class="view-photos"><i class="fa-solid fa-image"></i> View distribution photos</a>
+                    </div>
+                    <div class="donation-item">
+                        <div class="donation-header">
+                            <span class="donation-title">Anniversary</span>
+                            <span class="donation-amount">₹10,000</span>
+                        </div>
+                        <div class="donation-ngo">Care India</div>
+                        <div class="donation-meta">
+                            <span>92 people fed</span>
+                            <span>2026-03-15</span>
+                        </div>
+                        <a class="view-photos"><i class="fa-solid fa-image"></i> View distribution photos</a>
+                    </div>
+                </div>
+
+                <!-- Your Impact -->
+                <div class="impact-card">
+                    <div class="impact-header">Your Impact</div>
+                    <div class="impact-stats">
+                        <div class="impact-stat">
+                            <div class="impact-number">12</div>
+                            <div class="impact-label">Total Donations</div>
+                        </div>
+                        <div class="impact-stat">
+                            <div class="impact-number">387</div>
+                            <div class="impact-label">People Fed</div>
+                        </div>
+                    </div>
+                    <div class="badge-list">
+                        <div class="badge-item">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Compassionate Donor</span>
+                        </div>
+                        <div class="badge-item">
+                            <i class="fa-solid fa-trophy"></i>
+                            <span>Community Champion</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transparency Promise -->
+                <div class="promise-card">
+                    <div class="promise-title">100% Transparency Promise</div>
+                    <div class="promise-text">Every donation includes photo/video proof of distribution. Track your impact in real-time and see exactly how your generosity helps people in need.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

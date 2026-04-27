@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard - NourishNet</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            color: var(--text-dark);
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+        }
+
+        .header-text h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-text p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header i {
+            font-size: 1.25rem;
+            color: #10b981;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .donation-item {
+            padding: 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .donation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .donation-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-ready {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+
+        .status-transit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .donation-from {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .donation-quantity {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .donation-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .donation-details i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+        .accept-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .accept-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: #d1d5db;
+            margin-bottom: 0.75rem;
+        }
+
+        .upload-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .publish-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .publish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168,85,247,0.4);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .stats-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 1.25rem;
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .verified-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .verified-badge i {
+            font-size: 1.1rem;
+        }
+
+        .recent-item {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .recent-id {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .recent-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .recent-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .success-icon {
+            float: right;
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 0.75rem 2rem; display: flex; gap: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 1000;">
+        <a href="login-ngo.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: transparent; border: 2px solid #e5e7eb; border-radius: 50px; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left" style="font-size: 0.85rem;"></i> Back
+        </a>
+        <a href="index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: transparent; border: 2px solid #e5e7eb; border-radius: 50px; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-decoration: none;">
+            <i class="fa-solid fa-house" style="font-size: 0.85rem;"></i> Home
+        </a>
+    </div>
+
+    <div class="dashboard-header" style="margin-top: 60px;">
+        <div class="header-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="header-text">
+            <h1>NGO Dashboard</h1>
+            <p>Receive donations and share your impact</p>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Incoming Donations -->
+                <div class="dashboard-card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <i class="fa-solid fa-box-open"></i>
+                        <h2>Incoming Donations</h2>
+                    </div>
+                    <div class="donation-item">
+                        <div class="donation-header">
+                            <span class="donation-title">Buffet Surplus</span>
+                            <span class="status-badge status-ready">Ready for Pickup</span>
+                        </div>
+                        <div class="donation-from">From: Grand Hotel Mumbai</div>
+                        <div class="donation-quantity">25 kg</div>
+                        <div class="donation-details">
+                            <div><i class="fa-solid fa-location-dot"></i> 123 Marine Drive, Mumbai</div>
+                            <div><i class="fa-solid fa-clock"></i> Pickup Time: 18:00</div>
+                        </div>
+                        <button class="accept-btn">Accept Donation</button>
+                    </div>
+                    <div class="donation-item">
+                        <div class="donation-header">
+                            <span class="donation-title">Wedding Event Food</span>
+                            <span class="status-badge status-transit">In Transit</span>
+                        </div>
+                        <div class="donation-from">From: Royal Banquet Hall</div>
+                        <div class="donation-quantity">50 kg</div>
+                        <div class="donation-details">
+                            <div><i class="fa-solid fa-location-dot"></i> 456 MG Road, Bangalore</div>
+                            <div><i class="fa-solid fa-clock"></i> Pickup Time: 20:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Organization Stats -->
+                <div class="stats-card">
+                    <div class="stats-header">Organization Stats</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">48</div>
+                            <div class="stat-label">Donations Received</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1,240</div>
+                            <div class="stat-label">People Helped</div>
+                        </div>
+                    </div>
+                    <div class="verified-badge">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Verified NGO Partner</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Share Distribution Photos -->
+                <div class="dashboard-card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <i class="fa-solid fa-camera"></i>
+                        <h2>Share Distribution Photos</h2>
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Donation ID</label>
+                            <input type="text" class="form-input" placeholder="e.g., D001">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Upload Photos/Videos</label>
+                            <div class="upload-area">
+                                <div class="upload-icon">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </div>
+                                <div class="upload-text">Click to upload or drag and drop<br>PNG, JPG, MP4 up to 10MB</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-textarea" placeholder="Describe how the food was distributed and its impact"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of People Fed</label>
+                            <input type="number" class="form-input" placeholder="Enter count">
+                        </div>
+                        <button type="submit" class="publish-btn">Publish to Public Feed</button>
+                    </form>
+                </div>
+
+                <!-- Recent Distributions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-list"></i>
+                        <h2>Recent Distributions</h2>
+                    </div>
+                    <div class="recent-item">
+                        <i class="fa-solid fa-circle-check success-icon"></i>
+                        <div class="recent-id">D098</div>
+                        <div class="recent-text">Distributed 40kg of food to 120 people at shelter</div>
+                        <div class="recent-meta">130 people fed • 2026-04-24</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Hope Foundation",
+    "distance": 2.3,
+    "need": 120,
+    "urgency": "High",
+    "foodPreference": "Veg"
+  },
+  {
+    "id": 2,
+    "name": "Care for Kids",
+    "distance": 4.7,
+    "need": 80,
+    "urgency": "High",
+    "foodPreference": "Any"
+  },
+  {
+    "id": 3,
+    "name": "Elders Home Trust",
+    "distance": 1.5,
+    "need": 50,
+    "urgency": "Medium",
+    "foodPreference": "Veg"
+  },
+  {
+    "id": 4,
+    "name": "Street Angels NGO",
+    "distance": 6.2,
+    "need": 200,
+    "urgency": "High",
+    "foodPreference": "Any"
+  },
+  {
+    "id": 5,
+    "name": "Bright Future Shelter",
+    "distance": 3.8,
+    "need": 60,
+    "urgency": "Medium",
+    "foodPreference": "Non-veg"
+  },
+  {
+    "id": 6,
+    "name": "New Dawn Charity",
+    "distance": 8.1,
+    "need": 30,
+    "urgency": "Low",
+    "foodPreference": "Veg"
+  }
+]

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard - NourishNet</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            color: var(--text-dark);
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+        }
+
+        .header-text h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-text p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.75rem;
+            border-radius: 16px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stat-card-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .stat-card-purple {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        }
+
+        .stat-card-orange {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header i {
+            font-size: 1.25rem;
+            color: #f59e0b;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .task-item {
+            padding: 1.5rem;
+            border: 2px solid #fef3c7;
+            background: #fffbeb;
+            border-radius: 12px;
+            margin-bottom: 1.25rem;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .task-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .task-type i {
+            color: #f59e0b;
+        }
+
+        .task-badge {
+            padding: 0.35rem 0.85rem;
+            background: #dc2626;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .task-distance {
+            color: #3b82f6;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .task-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .task-detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .task-detail i {
+            color: var(--text-muted);
+            width: 16px;
+            margin-top: 0.15rem;
+        }
+
+        .task-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .task-btn {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .task-btn-navigate {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .task-btn-navigate:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .task-btn-accept {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .task-btn-accept:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .task-btn-complete {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .task-btn-complete:hover {
+            background: #059669;
+        }
+
+        .available-header {
+            color: #3b82f6;
+        }
+
+        .completed-item {
+            padding: 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .completed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .completed-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .completed-icon {
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+
+        .completed-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .completed-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 0.75rem 2rem; display: flex; gap: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 1000;">
+        <a href="login-volunteer.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: transparent; border: 2px solid #e5e7eb; border-radius: 50px; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left" style="font-size: 0.85rem;"></i> Back
+        </a>
+        <a href="index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: transparent; border: 2px solid #e5e7eb; border-radius: 50px; color: var(--text-dark); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; text-decoration: none;">
+            <i class="fa-solid fa-house" style="font-size: 0.85rem;"></i> Home
+        </a>
+    </div>
+
+    <div class="dashboard-header" style="margin-top: 60px;">
+        <div class="header-icon">
+            <i class="fa-solid fa-person-walking"></i>
+        </div>
+        <div class="header-text">
+            <h1>Volunteer Dashboard</h1>
+            <p>Help deliver food from donors to those in need</p>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card stat-card-green">
+                <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <div class="stat-number">34</div>
+                <div class="stat-label">Tasks Completed</div>
+            </div>
+            <div class="stat-card stat-card-purple">
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-number">892</div>
+                <div class="stat-label">People Helped</div>
+            </div>
+            <div class="stat-card stat-card-orange">
+                <div class="stat-icon"><i class="fa-solid fa-paper-plane"></i></div>
+                <div class="stat-number">127</div>
+                <div class="stat-label">Distance Covered</div>
+            </div>
+        </div>
+
+        <!-- Active Tasks -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fa-solid fa-clock"></i>
+                <h2>Active Tasks</h2>
+            </div>
+            <div class="task-item">
+                <div class="task-header">
+                    <div class="task-type">
+                        <i class="fa-solid fa-box"></i>
+                        <span>Pickup</span>
+                    </div>
+                    <div class="task-badge">System Trip</div>
+                </div>
+                <div class="task-distance">4.2 km</div>
+                <div class="task-details">
+                    <div class="task-detail">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>From: Royal Restaurant</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>To: Helping Hands NGO</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Time: 18:00 - 19:00</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="task-btn task-btn-navigate">
+                        <i class="fa-solid fa-location-arrow"></i> Navigate
+                    </button>
+                    <button class="task-btn task-btn-complete">
+                        <i class="fa-solid fa-check"></i> Complete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Tasks -->
+        <div class="dashboard-card">
+            <div class="card-header available-header">
+                <i class="fa-solid fa-list"></i>
+                <h2>Available Tasks</h2>
+            </div>
+            
+            <div class="task-item">
+                <div class="task-header">
+                    <div class="task-type">
+                        <i class="fa-solid fa-box"></i>
+                        <span>Pickup</span>
+                    </div>
+                    <div class="task-badge">URGENT</div>
+                </div>
+                <div class="task-distance">4.2 km</div>
+                <div class="task-details">
+                    <div class="task-detail">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>From: Grand Hotel Mumbai</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>To: Hope Foundation</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Time: 18:00</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="task-btn task-btn-navigate">
+                        <i class="fa-solid fa-route"></i> View Route
+                    </button>
+                    <button class="task-btn task-btn-accept">
+                        <i class="fa-solid fa-hand"></i> Accept Task
+                    </button>
+                </div>
+            </div>
+
+            <div class="task-item">
+                <div class="task-header">
+                    <div class="task-type">
+                        <i class="fa-solid fa-truck"></i>
+                        <span>Delivery</span>
+                    </div>
+                </div>
+                <div class="task-distance">5.8 km</div>
+                <div class="task-details">
+                    <div class="task-detail">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>From: Central Kitchen</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>To: Care India Shelter</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Time: 20:00</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="task-btn task-btn-navigate">
+                        <i class="fa-solid fa-route"></i> View Route
+                    </button>
+                    <button class="task-btn task-btn-accept">
+                        <i class="fa-solid fa-hand"></i> Accept Task
+                    </button>
+                </div>
+            </div>
+
+            <div class="task-item">
+                <div class="task-header">
+                    <div class="task-type">
+                        <i class="fa-solid fa-box-open"></i>
+                        <span>Distribution</span>
+                    </div>
+                    <div class="task-badge">URGENT</div>
+                </div>
+                <div class="task-distance">2.1 km</div>
+                <div class="task-details">
+                    <div class="task-detail">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>From: Hope Hai Ki Warehouse</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>To: Community Centre</span>
+                    </div>
+                    <div class="task-detail">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Time: 19:30</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="task-btn task-btn-navigate">
+                        <i class="fa-solid fa-route"></i> View Route
+                    </button>
+                    <button class="task-btn task-btn-accept">
+                        <i class="fa-solid fa-hand"></i> Accept Task
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Tasks -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fa-solid fa-circle-check"></i>
+                <h2>Completed Tasks</h2>
+            </div>
+            <div class="completed-item">
+                <div class="completed-header">
+                    <div class="completed-title">Delivery: Taj Hotel → Hope Foundation</div>
+                    <i class="fa-solid fa-circle-check completed-icon"></i>
+                </div>
+                <div class="completed-subtitle">Buffet Surplus [25kg]</div>
+                <div class="completed-meta">120 people fed • 2026-04-25 • 18:15</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

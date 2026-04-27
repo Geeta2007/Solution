@@ -1,0 +1,9 @@
+{
+  "name": "nourishnet-backend",
+  "version": "1.0.0",
+  "description": "Lightweight backend for NourishNet food donation platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

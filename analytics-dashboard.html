@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NourishNet - Real-Time Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.donations { background: linear-gradient(135deg, #ff7f50, #ff6b6b); }
+        .stat-icon.people { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .stat-icon.volunteers { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; }
+        .stat-icon.ngos { background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #333; }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .stat-trend {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+        }
+
+        .trend-up {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .trend-down {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .last-updated {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="refresh-btn" onclick="loadAnalytics()">
+        <i class="fa-solid fa-refresh"></i> Refresh Data
+    </button>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>📊 Real-Time Analytics</h1>
+            <p>Live data that powers your AI chatbots</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <!-- Stats will be loaded here -->
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3 class="chart-title">🏆 Top Performing NGOs</h3>
+                <div id="topNGOs">
+                    <!-- NGO data will be loaded here -->
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3 class="chart-title">🍽️ Popular Food Categories</h3>
+                <div id="foodCategories">
+                    <!-- Food category data will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3 class="chart-title">⚠️ Urgent Needs & Alerts</h3>
+            <div id="urgentNeeds">
+                <!-- Urgent needs will be loaded here -->
+            </div>
+        </div>
+
+        <div class="last-updated" id="lastUpdated">
+            <!-- Last updated time will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('http://localhost:3000/analytics-data');
+                const data = await response.json();
+                
+                renderStats(data);
+                renderTopNGOs(data.topNGOs);
+                renderFoodCategories(data.topFoodTypes);
+                renderUrgentNeeds(data.urgentNeeds);
+                
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${new Date(data.lastUpdated).toLocaleString()}`;
+                    
+            } catch (error) {
+                console.error('Failed to load analytics:', error);
+                document.getElementById('statsGrid').innerHTML = 
+                    '<div style="color: white; text-align: center; grid-column: 1/-1;">Failed to load data. Make sure the server is running.</div>';
+            }
+        }
+
+        function renderStats(data) {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon donations">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+                        <div class="stat-trend trend-up">+${data.recentTrends.donationGrowth}</div>
+                    </div>
+                    <div class="stat-value">${data.totalDonations}</div>
+                    <div class="stat-label">Total Donations</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon people">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div class="stat-trend trend-up">This Month</div>
+                    </div>
+                    <div class="stat-value">${data.totalPeopleFed.toLocaleString()}</div>
+                    <div class="stat-label">People Fed</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon volunteers">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
+                        <div class="stat-trend trend-up">+${data.recentTrends.volunteerGrowth}</div>
+                    </div>
+                    <div class="stat-value">${data.totalVolunteers}</div>
+                    <div class="stat-label">Active Volunteers</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon ngos">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div class="stat-trend trend-up">Verified</div>
+                    </div>
+                    <div class="stat-value">${data.totalNGOs}</div>
+                    <div class="stat-label">Partner NGOs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon donations">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div class="stat-trend trend-up">Avg Time</div>
+                    </div>
+                    <div class="stat-value">${data.avgDeliveryTime}m</div>
+                    <div class="stat-label">Delivery Time</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon people">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <div class="stat-trend trend-up">Saved</div>
+                    </div>
+                    <div class="stat-value">${data.recentTrends.wasteReduction}</div>
+                    <div class="stat-label">Food Waste Reduced</div>
+                </div>
+            `;
+        }
+
+        function renderTopNGOs(ngos) {
+            const container = document.getElementById('topNGOs');
+            container.innerHTML = ngos.map(ngo => `
+                <div class="list-item">
+                    <div>
+                        <strong>${ngo.name}</strong><br>
+                        <small>${ngo.peopleFed} people fed</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong>${ngo.donations}</strong><br>
+                        <small>donations</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderFoodCategories(categories) {
+            const container = document.getElementById('foodCategories');
+            container.innerHTML = categories.map(category => `
+                <div class="list-item">
+                    <div>
+                        <strong>${category.type}</strong>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong>${category.count}</strong> (${category.percentage}%)
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderUrgentNeeds(needs) {
+            const container = document.getElementById('urgentNeeds');
+            container.innerHTML = needs.map(need => `
+                <div class="list-item">
+                    <div style="color: #e53e3e;">
+                        <i class="fa-solid fa-exclamation-triangle"></i> ${need}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load data on page load
+        loadAnalytics();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadAnalytics, 30000);
+    </script>
+</body>
+</html>

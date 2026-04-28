@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amina AI - NGO Matching Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-container {
+            width: 400px;
+            height: 700px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff7f50, #ff6b6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .header-info h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-info p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .close-btn {
+            margin-left: auto;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.bot {
+            align-items: flex-start;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.875rem 1.125rem;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            color: #2d3748;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .quick-replies {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .quick-reply {
+            padding: 0.75rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .quick-reply:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .chat-input {
+            padding: 1.25rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+        }
+
+        .voice-btn, .send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .voice-btn {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .voice-btn:hover, .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: white;
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            max-width: 80px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #cbd5e0;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .bottom-nav {
+            display: flex;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #a0aec0;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-item i {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .nav-item span {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .powered-by {
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            color: #a0aec0;
+            background: #f8fafc;
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="avatar">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="header-info">
+                <h2>Amina AI</h2>
+                <p>NGO matching assistant</p>
+            </div>
+            <button class="close-btn" onclick="window.close()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-bubble">
+                    Hello! I'm Amina, your AI assistant for food donations. I'll help you find the perfect NGO for your surplus food. 
+                </div>
+            </div>
+            
+            <div class="message bot">
+                <div class="message-bubble">
+                    Please specify the type of food you have available for donation.
+                </div>
+                <div class="quick-replies">
+                    <div class="quick-reply" onclick="selectFoodType('Cooked Meals')">Cooked Meals</div>
+                    <div class="quick-reply" onclick="selectFoodType('Raw Ingredients')">Raw Ingredients</div>
+                    <div class="quick-reply" onclick="selectFoodType('Bakery Items')">Bakery Items</div>
+                    <div class="quick-reply" onclick="selectFoodType('Dairy Products')">Dairy Products</div>
+                    <div class="quick-reply" onclick="selectFoodType('Fruits & Vegetables')">Fruits & Vegetables</div>
+                    <div class="quick-reply" onclick="selectFoodType('Other')">Other</div>
+                </div>
+            </div>
+
+            <!-- Typing indicator -->
+            <div class="message bot">
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="chat-input">
+            <button class="voice-btn" onclick="startVoiceInput()">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <input type="text" class="input-field" id="messageInput" placeholder="Tell Amina what you need..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <i class="fa-solid fa-comments"></i>
+                <span>Chat</span>
+            </div>
+            <div class="nav-item">
+                <i class="fa-solid fa-history"></i>
+                <span>History</span>
+            </div>
+            <div class="nav-item">
+                <i class="fa-solid fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- Powered by -->
+        <div class="powered-by">
+            Powered by <i class="fa-solid fa-heart" style="color: #ff6b6b;"></i> NourishNet AI
+        </div>
+    </div>
+
+    <script>
+        let conversationState = {
+            step: 'food_type',
+            data: {}
+        };
+
+        function addMessage(content, isUser = false, hasQuickReplies = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${content}
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTyping() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+
+        function hideTyping() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function selectFoodType(foodType) {
+            addMessage(foodType, true);
+            conversationState.data.foodType = foodType;
+            conversationState.step = 'quantity';
+            
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage(`Great! You selected ${foodType}. How much food do you have? Please specify the quantity in kg.`);
+            }, 1500);
+        }
+
+        async function processUserInput(message) {
+            showTyping();
+            
+            setTimeout(async () => {
+                hideTyping();
+                
+                switch(conversationState.step) {
+                    case 'quantity':
+                        const quantity = parseFloat(message);
+                        if (quantity && quantity > 0) {
+                            conversationState.data.quantityKg = quantity;
+                            conversationState.data.quantity = `${quantity} kg`;
+                            conversationState.step = 'expiry';
+                            addMessage(`Perfect! ${quantity} kg of ${conversationState.data.foodType}. How many hours until this food expires?`);
+                        } else {
+                            addMessage(`Please enter a valid quantity in kg (e.g., "5" for 5 kg).`);
+                        }
+                        break;
+                        
+                    case 'expiry':
+                        const hours = parseInt(message);
+                        if (hours && hours > 0) {
+                            conversationState.data.expiryHours = hours;
+                            conversationState.step = 'preference';
+                            
+                            const urgencyText = hours <= 4 ? 'urgent' : hours <= 12 ? 'moderate' : 'low';
+                            addMessage(`Got it! ${hours} hours until expiry (${urgencyText} priority). What's the food preference?`);
+                            
+                            // Add quick replies for food preference
+                            setTimeout(() => {
+                                const messagesContainer = document.getElementById('chatMessages');
+                                const messageDiv = document.createElement('div');
+                                messageDiv.className = 'message bot';
+                                messageDiv.innerHTML = `
+                                    <div class="quick-replies">
+                                        <div class="quick-reply" onclick="selectPreference('Veg')">Vegetarian</div>
+                                        <div class="quick-reply" onclick="selectPreference('Non-veg')">Non-Vegetarian</div>
+                                        <div class="quick-reply" onclick="selectPreference('Any')">Any</div>
+                                    </div>
+                                `;
+                                messagesContainer.appendChild(messageDiv);
+                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            }, 500);
+                        } else {
+                            addMessage(`Please enter valid hours (e.g., "6" for 6 hours).`);
+                        }
+                        break;
+                        
+                    case 'location':
+                        conversationState.data.location = message;
+                        conversationState.step = 'matching';
+                        addMessage(`Thank you! Let me find the best NGO matches for your donation...`);
+                        
+                        // Call AI matching
+                        setTimeout(() => {
+                            getAIRecommendation();
+                        }, 2000);
+                        break;
+                        
+                    default:
+                        addMessage(`I'm here to help with food donations. Let's start over - what type of food do you want to donate?`);
+                        resetConversation();
+                }
+            }, 1500);
+        }
+
+        function selectPreference(preference) {
+            addMessage(preference, true);
+            conversationState.data.foodPreference = preference;
+            conversationState.step = 'location';
+            
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage(`Excellent! Now, what's your location or area for pickup?`);
+            }, 1500);
+        }
+
+        async function getAIRecommendation() {
+            showTyping();
+            
+            try {
+                const response = await fetch('http://localhost:3000/match-ngo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(conversationState.data)
+                });
+
+                const result = await response.json();
+                hideTyping();
+                
+                const { recommendedNGO, reasoning, alternatives } = result;
+                
+                addMessage(`🎯 <strong>Best Match Found!</strong><br><br>
+                    <strong>${recommendedNGO.name}</strong> (${recommendedNGO.score}% match)<br><br>
+                    ${reasoning}`);
+                
+                if (alternatives && alternatives.length > 0) {
+                    setTimeout(() => {
+                        addMessage(`<strong>Alternative options:</strong><br>
+                            ${alternatives.map(alt => `• ${alt.name} (${alt.score}% match)`).join('<br>')}`);
+                    }, 1000);
+                }
+                
+                setTimeout(() => {
+                    addMessage(`Would you like me to connect you with ${recommendedNGO.name} or explore other options?`);
+                    
+                    // Add action buttons
+                    setTimeout(() => {
+                        const messagesContainer = document.getElementById('chatMessages');
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message bot';
+                        messageDiv.innerHTML = `
+                            <div class="quick-replies">
+                                <div class="quick-reply" onclick="confirmDonation('${recommendedNGO.name}')">Connect with ${recommendedNGO.name}</div>
+                                <div class="quick-reply" onclick="showAlternatives()">See Alternatives</div>
+                                <div class="quick-reply" onclick="resetConversation()">Start Over</div>
+                            </div>
+                        `;
+                        messagesContainer.appendChild(messageDiv);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }, 500);
+                }, 2000);
+                
+            } catch (error) {
+                hideTyping();
+                addMessage(`I'm having trouble connecting to our matching service. Please make sure the backend server is running, or try again later.`);
+            }
+        }
+
+        function confirmDonation(ngoName) {
+            addMessage(`Connect with ${ngoName}`, true);
+            
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage(`🎉 Perfect! I'm connecting you with ${ngoName}. They will contact you within 30 minutes to arrange pickup.<br><br>
+                    <strong>Next steps:</strong><br>
+                    1. Keep your phone nearby<br>
+                    2. Prepare the food for pickup<br>
+                    3. You'll receive SMS updates<br><br>
+                    Thank you for making a difference! 💚`);
+                
+                setTimeout(() => {
+                    addMessage(`Is there anything else I can help you with today?`);
+                }, 2000);
+            }, 2000);
+        }
+
+        function showAlternatives() {
+            addMessage("Show alternatives", true);
+            addMessage("Here are other NGOs that could work for your donation. Would you like details about any specific organization?");
+        }
+
+        function resetConversation() {
+            conversationState = { step: 'food_type', data: {} };
+            addMessage("Let's start fresh! What type of food would you like to donate?");
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, true);
+                input.value = '';
+                processUserInput(message);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    document.querySelector('.voice-btn i').className = 'fa-solid fa-stop';
+                    document.querySelector('.voice-btn').style.background = 'linear-gradient(135deg, #e53e3e, #c53030)';
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('messageInput').value = transcript;
+                };
+
+                recognition.onend = function() {
+                    document.querySelector('.voice-btn i').className = 'fa-solid fa-microphone';
+                    document.querySelector('.voice-btn').style.background = 'linear-gradient(135deg, #4299e1, #3182ce)';
+                };
+
+                recognition.start();
+            } else {
+                alert('Voice recognition not supported in this browser.');
+            }
+        }
+    </script>
+</body>
+</html>
